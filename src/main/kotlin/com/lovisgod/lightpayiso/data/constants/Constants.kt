@@ -7,21 +7,34 @@ object Constants {
 
     const val SRCI = 53
     val Prefs = Preferences.userRoot().node("com.lovisgod.lightpayiso")
-     val ISW_TERMINAL_IP_CTMS = "196.6.103.126"
+     val ISW_TERMINAL_IP_CTMS = "196.6.103.10"
     val  ISW_TERMINAL_PORT_CTMS = 55533
+
+    val UP_IP = "196.46.20.30"
+    val UP_PORT = 5334
+
+
+    val ISW_TERMINAL_IP_CTMS_PROD = "196.6.103.18"
+    val  ISW_TERMINAL_PORT_CTMS_PROD = 4008
     val  productionCMS = "3CDDE1CC6FDD225C9A8BC3EB065509A6"
     val testCMS = "DBEECACCB4210977ACE73A1D873CA59F"
-    val NIBSS_TMK = "9A0000"
-    val NIBSS_TPK = "9G0000"
-    val NIBSS_TSK = "9B0000"
+    val UPCTMK = "3CDDE1CC6FDD225C9A8BC3EB065509A6"
+    val TMK = "9A0000"
+    val TPK = "9G0000"
+    val TSK = "9B0000"
     val NIBSS_PARAMETER = "9C0000"
     val NIBSS_MASTERKEY = "NIBSS_MASTERKEY"
     val NIBSS_SESSIONKEY = "NIBSS_SESSIONKEY"
     val NIBSS_PINKEY = "NIBSS_PINKEY"
+    const val TIMEOUT_CODE = "0x0x0"
 
 
     fun getCms(test: Boolean): String{
         return if (test) testCMS else productionCMS
+    }
+
+    fun getUPCTMK(test: Boolean): String {
+        return if (test) UPCTMK else UPCTMK
     }
 
     fun getNextStan(): String {

@@ -193,6 +193,22 @@ object IsoUtils {
         "C2" to "PIN Unblock failed",
         "D1" to "MAC Error",
         "E1" to "Prepay error",
-        TIMEOUT_CODE to "Read Timeout Error"
+        TIMEOUT_CODE to "Read Timeout Error",
+        "" to "Unkniwn Error code"
     )
+
+    fun getBINFromPAN(pan: String): String {
+        // BIN length is typically 6 digits
+        val binLength = 6
+
+        if (pan.isEmpty()) return ""
+
+        // Remove any whitespace or special characters from the PAN
+        val sanitizedPAN = pan.replace("\\s+".toRegex(), "")
+
+        // Extract the BIN from the PAN
+        val bin = sanitizedPAN.take(binLength)
+
+        return bin
+    }
 }

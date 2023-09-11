@@ -3,6 +3,7 @@ package com.lovisgod.lightpayiso.tcp;/*
  * and open the template in the editor.
  */
 
+import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -11,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -20,31 +22,32 @@ import java.security.NoSuchAlgorithmException;
  * @author tosin.eniolorunda
  */
 
-public class IsoSocketImpl implements IsoSocket {
+public class IsoNoSslSocketImpl implements IsoSocket {
 
-    private SSLSocket socket;
+    private Socket socket;
     private SocketAddress socketAddress;
     private String serverIp;
     private int serverPort;
     private int timeout;
     private static final int SOCKET_SIZE_INCREAMENT = 100 * 1024;
-    private SSLSocketFactory factory;
+    private SocketFactory factory;
 
-    public IsoSocketImpl(SocketAddress socketAddress, int timeout) {
+    public IsoNoSslSocketImpl(SocketAddress socketAddress, int timeout) {
         this.socketAddress = socketAddress;
         this.timeout = timeout;
     }
 
-    public IsoSocketImpl(String serverIp, int serverPort, int timeout) {
+    public IsoNoSslSocketImpl(String serverIp, int serverPort, int timeout) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.timeout = timeout;
-        configureSSLContext();
+//        configureSSLContext();
+        createSocketWithNoSSL();
     }
 
 
     private void createSocketWithNoSSL() {
-
+        factory = SocketFactory.getDefault();
     }
 
     private void configureSSLContext() {
@@ -85,7 +88,7 @@ public class IsoSocketImpl implements IsoSocket {
     @Override
     public boolean open() {
         try {
-            socket = (SSLSocket) factory.createSocket(serverIp, serverPort);
+            socket = factory.createSocket(serverIp, serverPort);
             socket.setSoTimeout(timeout);
             return true;
         } catch (IOException ex) {

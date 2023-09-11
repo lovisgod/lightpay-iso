@@ -4,7 +4,9 @@ import com.lovisgod.lightpayiso.utild.DateUtils.monthFormatter
 import com.lovisgod.lightpayiso.utild.DateUtils.timeAndDateFormatter
 import com.lovisgod.lightpayiso.utild.DateUtils.timeFormatter
 import com.lovisgod.lightpayiso.data.constants.Constants.ISW_TERMINAL_IP_CTMS
+import com.lovisgod.lightpayiso.data.constants.Constants.ISW_TERMINAL_IP_CTMS_PROD
 import com.lovisgod.lightpayiso.data.constants.Constants.ISW_TERMINAL_PORT_CTMS
+import com.lovisgod.lightpayiso.data.constants.Constants.ISW_TERMINAL_PORT_CTMS_PROD
 import com.lovisgod.lightpayiso.data.constants.Constants.getNextStan
 import com.lovisgod.lightpayiso.tcp.IsoSocket
 import com.lovisgod.lightpayiso.tcp.IsoSocketImpl
@@ -15,6 +17,7 @@ import com.lovisgod.lightpayiso.utild.TripleDES
 import org.jpos.iso.ISOException
 import org.jpos.iso.ISOMsg
 import org.jpos.iso.packager.GenericPackager
+import org.jpos.iso.packager.ISO87APackager
 import java.util.*
 
 
@@ -64,12 +67,13 @@ class IsoMessageBuilder {
 
             if (isoMsg.getValue(39) != "00") {
                 return "no key"
+            } else {
+                val encryptedKey = isoMsg.getString(53)
+                val decryptedKey = TripleDES.soften(key, encryptedKey)
+                println("Decrypted Key => ${decryptedKey.toString()}")
+                return decryptedKey
             }
 
-            val encryptedKey = isoMsg.getString(53)
-            val decryptedKey = TripleDES.soften(key, encryptedKey)
-            println("Decrypted Key => ${decryptedKey.toString()}")
-            return decryptedKey
         } catch (e: ISOException) {
             throw Exception(e)
         }
@@ -84,6 +88,7 @@ class IsoMessageBuilder {
             val now = Date()
             val stan = getNextStan()
             val field62 = "01009280824266"
+//            val packager = ISO87APackager()
             // Load package from resources directory.
             val isoMsg = ISOMsg()
             isoMsg.packager = packager
@@ -95,18 +100,20 @@ class IsoMessageBuilder {
             isoMsg[13] = monthFormatter.format(now)
             isoMsg[41] = terminalId
             isoMsg[62] = field62
-            val dataToSend = isoMsg.pack()
-
+            var dataToSend = isoMsg.pack()
+            dataToSend[19]++
             val length = dataToSend.size
             println("length => $length")
-            val temp = ByteArray(length - 64)
-            if (length >= 64) {
-                System.arraycopy(dataToSend, 0, temp, 0, length - 64)
-            }
+//            val temp = ByteArray(length - 64)
+//            if (length >= 64) {
+//                System.arraycopy(dataToSend, 0, temp, 0, length - 64)
+//            }
 
-            val hashValue = IsoUtils.getMac(key, temp) //SHA256
+            val hashValue = IsoUtils.getMac(key, dataToSend) //SHA256
             isoMsg[64] = hashValue
              printISOMessage(isoMsg)
+
+            println(isoMsg.pack().decodeToString())
 
             // set server Ip and port
             socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
