@@ -88,6 +88,7 @@ class LightpayIsoApplication {
 		val isoHelper = IsoMessageBuilderUp()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
+		var param: Any = TerminalInfo()
 		var masterKey = isoHelper.generateKeyDownloadMessage(
 			processCode = Constants.TMK,
 			terminalId = terminalId,
@@ -111,13 +112,18 @@ class LightpayIsoApplication {
 			)
 			println("pinkey is => ::: ${pinkKey}")
 		}
+
+		if (sessionKey != "no key") {
+			 param = downloadParameterUp(terminalId = terminalId, sessionKey = sessionKey.toString())
+		}
 		return ResponseObject(
 			statusCode = 200,
 			message = "terminal key details",
 			data = KeyResponse(
 				sessionKey = sessionKey.toString(),
 				masterKey = masterKey.toString(),
-				pinKey = pinkKey.toString()
+				pinKey = pinkKey.toString(),
+				params = param
 			)
 		)
 
