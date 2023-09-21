@@ -153,6 +153,8 @@ class LightpayIsoApplication {
 	@PostMapping("/perform-cashout-transaction")
 	fun performCashout(
 		@RequestHeader(value = "sskey") sskey: String,
+		@RequestHeader(value = "api_key") api_key: String,
+		@RequestHeader(value = "merchant_id") merchant_id: String,
 		@RequestBody(required = true) transactionRequest: TransactionRequest): Any {
 		val isoHelper = IsoMessageBuilderUp()
 
@@ -184,6 +186,49 @@ class LightpayIsoApplication {
 			data = response
 		)
 
+	}
+
+
+	@PostMapping("/perform-purchase-transaction")
+	fun performPurchase(
+		@RequestHeader(value = "sskey") sskey: String,
+		@RequestHeader(value = "api_key") api_key: String,
+		@RequestHeader(value = "merchant_id") merchant_id: String,
+		@RequestBody(required = true) transactionRequest: TransactionRequest): Any {
+
+		if (transactionRequest.amount?.toInt()!! > 200000) {
+			return performCashout(sskey, api_key, merchant_id, transactionRequest)
+		} else {
+			val isoHelper = IsoMessageBuilderUp()
+
+			var terminalInfo = TerminalInfo().copy(
+				merchantCategoryCode = transactionRequest.merchantCategoryCode.toString(),
+				terminalCode =transactionRequest.terminalCode.toString(),
+				merchantName = transactionRequest.merchantName.toString(),
+				merchantId = transactionRequest.merchantId.toString()
+			)
+			var transactionInfo = RequestIccData().apply {
+				this.haspin = transactionRequest.haspin?.equals(true)
+				this.TRACK_2_DATA = transactionRequest.track2Data.toString()
+				this.APP_PAN_SEQUENCE_NUMBER = transactionRequest.panSequenceNumber.toString()
+				this.TRANSACTION_AMOUNT = transactionRequest.amount.toString()
+				this.EMV_CARD_PIN_DATA.CardPinBlock = transactionRequest.pinBlock.toString()
+			}
+
+			val response  = isoHelper.getCashoutRequest(
+				iccString = transactionRequest.iccString.toString(),
+				terminalInfo = terminalInfo,
+				transaction = transactionInfo,
+				accountType = AccountType.Default,
+				posDataCode = transactionRequest.posDataCode.toString(),
+				sessionKey = sskey
+			)
+			return ResponseObject(
+				statusCode = 200,
+				message = "terminal transaction",
+				data = response
+			)
+		}
 	}
 }
 

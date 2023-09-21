@@ -169,7 +169,7 @@ class IsoMessageBuilderUp {
     ): PurchaseResponse {
         val now = Date()
         val message = ISOMsg()
-        val processCode = "00" + accountType.value + "00"
+        val processCode = "01" + accountType.value + "00"
         var hasPin = transaction.haspin
         val stan = getNextStan()
         val randomReference = "${Date().time}".substring(0, 12)
