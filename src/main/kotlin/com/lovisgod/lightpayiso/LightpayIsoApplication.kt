@@ -204,7 +204,7 @@ class LightpayIsoApplication {
 		if (transactionRequest.amount?.toInt()!! > 200000) {
 			return performCashout(sskey, api_key, merchant_id, transactionRequest)
 		} else {
-			val isoHelper = IsoMessageBuilderUp()
+			val isoHelper = IsoMessageBuilder()
 
 			var terminalInfo = TerminalInfo().copy(
 				merchantCategoryCode = transactionRequest.merchantCategoryCode.toString(),
@@ -220,7 +220,7 @@ class LightpayIsoApplication {
 				this.EMV_CARD_PIN_DATA.CardPinBlock = transactionRequest.pinBlock.toString()
 			}
 
-			val response  = isoHelper.getCashoutRequest(
+			val response  = isoHelper.getPurchaseRequest(
 				iccString = transactionRequest.iccString.toString(),
 				terminalInfo = terminalInfo,
 				transaction = transactionInfo,
