@@ -233,7 +233,7 @@ class IsoMessageBuilder {
         try {
 
             // set server Ip and port
-            socket.setIpAndPort(Constants.UP_IP, Constants.UP_PORT)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
             // open connection
             val isConnected = socket.open()
             if (!isConnected) return PurchaseResponse(
