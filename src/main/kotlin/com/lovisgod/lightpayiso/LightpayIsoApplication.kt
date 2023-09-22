@@ -52,7 +52,7 @@ class LightpayIsoApplication {
 			println("pinkey is => ::: ${pinkKey}")
 		}
 		if (sessionKey != "no key") {
-			param = downloadParameterUp(terminalId = terminalId, sessionKey = sessionKey.toString())
+			param = downloadParameter(terminalId = terminalId, sessionKey = sessionKey.toString())
 		}
 		return ResponseObject(
 			statusCode = 200,
