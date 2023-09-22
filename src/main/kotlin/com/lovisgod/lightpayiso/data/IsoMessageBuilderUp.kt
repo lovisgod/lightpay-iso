@@ -131,7 +131,7 @@ class IsoMessageBuilderUp {
             val response = socket.sendReceive(isoMsg.pack())
 
             println("response from up : ${response?.asList()}")
-            println("response from upparams : ${HexUtil.toHexString(response)}")
+            println("response from upparams : ${response?.let { HexUtil.toHexString(it) }}")
 
             isoMsg.unpack(response)
             printISOMessage(isoMsg)
@@ -256,7 +256,7 @@ class IsoMessageBuilderUp {
             println("Purchase Request HEX ---> ${IsoUtils.bytesToHex(request)}")
 
             val response = socket.sendReceive(request)
-            println("response from nibbspurchase : ${HexUtil.toHexString(response)}")
+            println("response from nibbspurchase : ${response?.let { HexUtil.toHexString(it) }}")
 
             println("response from nibbspurchase length : ${response?.size}")
 
