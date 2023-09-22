@@ -11,7 +11,7 @@
 	<groupId>com.lovisgod</groupId>
 	<artifactId>lightpay-iso</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<package>war</package>
+<!--	<package>war</package>-->
 	<name>lightpay-iso</name>
 	<description>light pay transaction handler for lightpay</description>
 	<properties>
@@ -64,11 +64,11 @@
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>com.heroku.sdk</groupId>
-				<artifactId>heroku-maven-plugin</artifactId>
-				<version>3.0.7</version>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.heroku.sdk</groupId>-->
+<!--				<artifactId>heroku-maven-plugin</artifactId>-->
+<!--				<version>3.0.7</version>-->
+<!--			</plugin>-->
 <!--			<plugin>-->
 <!--				<groupId>org.apache.maven.plugins</groupId>-->
 <!--				<artifactId>maven-compiler-plugin</artifactId>-->
