@@ -27,6 +27,8 @@ object Constants {
     val NIBSS_SESSIONKEY = "NIBSS_SESSIONKEY"
     val NIBSS_PINKEY = "NIBSS_PINKEY"
     const val TIMEOUT_CODE = "0x0x0"
+    const val LOCAL_TMS_URL = "http://127.0.0.1:8085/ext/api/v1"
+    const val PROD_TMS_URL = "https://payble-tms-1418295d2495.herokuapp.com/ext/api/v1"
 
 
     fun getCms(test: Boolean): String{

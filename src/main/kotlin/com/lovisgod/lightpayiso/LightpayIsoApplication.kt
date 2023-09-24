@@ -4,14 +4,16 @@ import com.lovisgod.lightpayiso.data.IsoMessageBuilder
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
+import com.lovisgod.lightpayiso.utild.ObjectMapper
+import com.sun.net.httpserver.Headers
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.http.HttpResponse.BodyHandlers
 
 @SpringBootApplication
 @RestController
@@ -161,6 +163,12 @@ class LightpayIsoApplication {
 		@RequestHeader(value = "api_key") api_key: String,
 		@RequestHeader(value = "merchant_id") merchant_id: String,
 		@RequestBody(required = true) transactionRequest: TransactionRequest): Any {
+
+		if (!validateKeys(api_key, merchant_id)) return ResponseObject(
+			statusCode = 401,
+			message = "Not Authorized",
+			data = null
+		)
 		val isoHelper = IsoMessageBuilderUp()
 
 		var terminalInfo = TerminalInfo().copy(
@@ -201,6 +209,13 @@ class LightpayIsoApplication {
 		@RequestHeader(value = "merchant_id") merchant_id: String,
 		@RequestBody(required = true) transactionRequest: TransactionRequest): Any {
 
+
+		if (!validateKeys(api_key, merchant_id)) return ResponseObject(
+			statusCode = 401,
+			message = "Not Authorized",
+			data = null
+		)
+
 		if (transactionRequest.amount?.toInt()!! > 200000) {
 			return performCashout(sskey, api_key, merchant_id, transactionRequest)
 		} else {
@@ -233,6 +248,27 @@ class LightpayIsoApplication {
 				message = "terminal transaction",
 				data = response
 			)
+		}
+	}
+
+	fun validateKeys(api_key: String, merchant_id: String): Boolean {
+		try {
+			val request: HttpRequest = HttpRequest.newBuilder()
+				.uri(URI("${Constants.PROD_TMS_URL}/merchant/validate-key"))
+				.headers("api_key", api_key, "merchant_id", merchant_id)
+				.GET()
+				.build()
+
+			val client   = HttpClient.newHttpClient()
+			val response  = client.send(request, BodyHandlers.ofString())
+			println(response.body())
+			val responseObject = ObjectMapper.convertHttpResponse<KeyValidationResponse>(response.body())
+
+
+			return if (responseObject.status == "success") true else false
+		} catch (e: Exception) {
+			e.printStackTrace()
+			return false
 		}
 	}
 }
