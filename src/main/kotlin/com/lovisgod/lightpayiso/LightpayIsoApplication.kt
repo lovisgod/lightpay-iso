@@ -115,7 +115,7 @@ class LightpayIsoApplication {
 			pinkKey = isoHelper.generateKeyDownloadMessage(
 				processCode = Constants.TPK,
 				terminalId = terminalId,
-				key = sessionKey.toString()
+				key = masterKey.toString()
 			)
 			println("pinkey is => ::: ${pinkKey}")
 		}
