@@ -30,7 +30,7 @@ class IsoMessageBuilder {
     var data = javaClass.getResourceAsStream("/fields.xml")
     var packager = GenericPackager(data)
 
-    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS, 60000)
+    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, 20000)
 
 
     fun generateKeyDownloadMessage(
@@ -53,7 +53,7 @@ class IsoMessageBuilder {
             printISOMessage(isoMsg)
             val dataToSend = isoMsg.pack()
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
 
             // open to socket endpoint
             socket.open()
@@ -121,7 +121,7 @@ class IsoMessageBuilder {
             println(isoMsg.pack().decodeToString())
 
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
 
             // open to socket endpoint
             socket.open()
@@ -148,7 +148,7 @@ class IsoMessageBuilder {
 
             // parse and save terminal info
             val terminalData =
-                TerminalInfoParser.parse(terminalId, ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS, terminalString)
+                TerminalInfoParser.parse(terminalId, ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, terminalString)
             println("Terminal Data => " +
                     "currency code  :: ${terminalData?.transCurrencyCode}")
 
@@ -233,7 +233,7 @@ class IsoMessageBuilder {
         try {
 
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
             // open connection
             val isConnected = socket.open()
             if (!isConnected) return PurchaseResponse(

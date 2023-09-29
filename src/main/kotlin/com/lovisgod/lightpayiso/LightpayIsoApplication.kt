@@ -33,7 +33,7 @@ class LightpayIsoApplication {
 		var masterKey = isoHelper.generateKeyDownloadMessage(
 			processCode = Constants.TMK,
 			terminalId = terminalId,
-				key = Constants.testCMS
+				key = Constants.productionCMS
 		)
 
 		if (masterKey != "no key") {
@@ -216,9 +216,9 @@ class LightpayIsoApplication {
 			data = null
 		)
 
-		if (transactionRequest.amount?.toInt()!! > 200000) {
-			return performCashout(sskey, api_key, merchant_id, transactionRequest)
-		} else {
+//		if (transactionRequest.amount?.toInt()!! > 200000) {
+//			return performCashout(sskey, api_key, merchant_id, transactionRequest)
+//		} else {
 			val isoHelper = IsoMessageBuilder()
 
 			var terminalInfo = TerminalInfo().copy(
@@ -248,7 +248,7 @@ class LightpayIsoApplication {
 				message = "terminal transaction",
 				data = response
 			)
-		}
+//		}
 	}
 
 	fun validateKeys(api_key: String, merchant_id: String): Boolean {
