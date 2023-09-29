@@ -216,6 +216,7 @@ class IsoMessageBuilderUp {
             message.set(62, "010085C54697648036MeterNumber=12.87001510.Acct=0000000000")
         } else {
             message.set(123, posDataCode)
+            message.set(62, "010085C54697648036MeterNumber=12.87001510.Acct=0000000000")
         }
 
 
