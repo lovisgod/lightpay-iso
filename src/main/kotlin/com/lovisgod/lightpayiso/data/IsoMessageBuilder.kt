@@ -208,7 +208,6 @@ class IsoMessageBuilder {
         message.set(49, "566")
         message.set(55, iccString)
 
-
         if (hasPin == true) {
             message.set(52, transaction.EMV_CARD_PIN_DATA.CardPinBlock)
             message.set(123, posDataCode)
@@ -219,11 +218,12 @@ class IsoMessageBuilder {
 
         // set message hash
         val bytes = message.pack()
+//        bytes[19]++
         val length = bytes.size
-//        val temp = ByteArray(length - 64)
-//        if (length >= 64) {
-//            System.arraycopy(bytes, 0, temp, 0, length - 64)
-//        }
+        val temp = ByteArray(length - 64)
+        if (length >= 64) {
+            System.arraycopy(bytes, 0, temp, 0, length - 64)
+        }
 
 
         val hashValue = IsoUtils.getMac(sessionKey, bytes) //SHA256

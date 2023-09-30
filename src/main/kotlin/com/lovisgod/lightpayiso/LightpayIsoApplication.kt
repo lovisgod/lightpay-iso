@@ -49,7 +49,7 @@ class LightpayIsoApplication {
 			pinkKey = isoHelper.generateKeyDownloadMessage(
 				processCode = Constants.TPK,
 				terminalId = terminalId,
-				key = sessionKey.toString()
+				key = masterKey.toString()
 			)
 			println("pinkey is => ::: ${pinkKey}")
 		}
@@ -90,7 +90,7 @@ class LightpayIsoApplication {
 
 	}
 
-	@GetMapping("/get-up-keys")
+	@GetMapping("/get-up-key")
 	fun downloadAllupKey(@RequestParam(value = "terminalId") terminalId: String): Any {
 		val isoHelper = IsoMessageBuilderUp()
 		var pinkKey: Any = ""
