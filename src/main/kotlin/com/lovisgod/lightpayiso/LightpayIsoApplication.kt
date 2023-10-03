@@ -33,7 +33,7 @@ class LightpayIsoApplication {
 		var masterKey = isoHelper.generateKeyDownloadMessage(
 			processCode = Constants.TMK,
 			terminalId = terminalId,
-				key = Constants.productionCMS
+				key = Constants.testCMS
 		)
 
 		if (masterKey != "no key") {
@@ -272,6 +272,7 @@ class LightpayIsoApplication {
 		}
 	}
 }
+
 
 
 fun main(args: Array<String>) {

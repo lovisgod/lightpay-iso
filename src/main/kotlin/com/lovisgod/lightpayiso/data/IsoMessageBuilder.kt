@@ -30,7 +30,7 @@ class IsoMessageBuilder {
     var data = javaClass.getResourceAsStream("/fields.xml")
     var packager = GenericPackager(data)
 
-    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, 20000)
+    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS, 20000)
 
 
     fun generateKeyDownloadMessage(
@@ -53,7 +53,7 @@ class IsoMessageBuilder {
             printISOMessage(isoMsg)
             val dataToSend = isoMsg.pack()
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
 
             // open to socket endpoint
             socket.open()
@@ -121,7 +121,7 @@ class IsoMessageBuilder {
             println(isoMsg.pack().decodeToString())
 
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
 
             // open to socket endpoint
             socket.open()
@@ -148,7 +148,7 @@ class IsoMessageBuilder {
 
             // parse and save terminal info
             val terminalData =
-                TerminalInfoParser.parse(terminalId, ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, terminalString)
+                TerminalInfoParser.parse(terminalId, ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS, terminalString)
             println("Terminal Data => " +
                     "currency code  :: ${terminalData?.transCurrencyCode}")
 
@@ -193,10 +193,11 @@ class IsoMessageBuilder {
         message.set(13, monthFormatter.format(now))
         message.set(14, expiry)
         message.set(18, terminalInfo.merchantCategoryCode)
-        message.set(22, if (hasPin == true) "051" else "950")
+//        message.set(22, if (hasPin == true) "051" else "950")
+        message.set(22, "051")
         message.set(23, transaction.APP_PAN_SEQUENCE_NUMBER)
         message.set(25, "00")
-        message.set(26, "06")
+        message.set(26, "04")
         message.set(28, "C00000000")
         message.set(32, IsoUtils.getBINFromPAN(panX))
         message.set(35, transaction.TRACK_2_DATA)
@@ -220,10 +221,10 @@ class IsoMessageBuilder {
         val bytes = message.pack()
 //        bytes[19]++
         val length = bytes.size
-        val temp = ByteArray(length - 64)
-        if (length >= 64) {
-            System.arraycopy(bytes, 0, temp, 0, length - 64)
-        }
+//        val temp = ByteArray(length - 64)
+//        if (length >= 64) {
+//            System.arraycopy(bytes, 0, temp, 0, length - 64)
+//        }
 
 
         val hashValue = IsoUtils.getMac(sessionKey, bytes) //SHA256
@@ -233,7 +234,7 @@ class IsoMessageBuilder {
         try {
 
             // set server Ip and port
-            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD)
+            socket.setIpAndPort(ISW_TERMINAL_IP_CTMS, ISW_TERMINAL_PORT_CTMS)
             // open connection
             val isConnected = socket.open()
             if (!isConnected) return PurchaseResponse(
