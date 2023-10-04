@@ -55,6 +55,10 @@ class RequestIccData(
 
         var TRACK_2_DATA: String = ""
 
+        var userPhoneNumber: String = ""
+
+        var  agentPhoneNumber: String = ""
+
 
 }
 

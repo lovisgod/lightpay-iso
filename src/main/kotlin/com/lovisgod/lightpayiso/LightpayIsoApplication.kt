@@ -202,6 +202,53 @@ class LightpayIsoApplication {
 	}
 
 
+	@PostMapping("/perform-payattitude-transaction")
+	fun performPayAttitude(
+		@RequestHeader(value = "sskey") sskey: String,
+		@RequestHeader(value = "api_key") api_key: String,
+		@RequestHeader(value = "merchant_id") merchant_id: String,
+		@RequestBody(required = true) transactionRequest: TransactionRequest): Any {
+
+		if (!validateKeys(api_key, merchant_id)) return ResponseObject(
+			statusCode = 401,
+			message = "Not Authorized",
+			data = null
+		)
+		val isoHelper = IsoMessageBuilderUp()
+
+		var terminalInfo = TerminalInfo().copy(
+			merchantCategoryCode = transactionRequest.merchantCategoryCode.toString(),
+			terminalCode =transactionRequest.terminalCode.toString(),
+			merchantName = transactionRequest.merchantName.toString(),
+			merchantId = transactionRequest.merchantId.toString()
+		)
+		var transactionInfo = RequestIccData().apply {
+			this.haspin = transactionRequest.haspin?.equals(true)
+			this.TRACK_2_DATA = transactionRequest.track2Data.toString()
+			this.APP_PAN_SEQUENCE_NUMBER = transactionRequest.panSequenceNumber.toString()
+			this.TRANSACTION_AMOUNT = transactionRequest.amount.toString()
+			this.EMV_CARD_PIN_DATA.CardPinBlock = transactionRequest.pinBlock.toString()
+			this.agentPhoneNumber = transactionRequest.agentPhoneNumber.toString()
+			this.userPhoneNumber = transactionRequest.userPhoneNumber.toString()
+		}
+
+		val response  = isoHelper.getPayAttitudeRequest(
+			iccString = transactionRequest.iccString.toString(),
+			terminalInfo = terminalInfo,
+			transaction = transactionInfo,
+			accountType = AccountType.Default,
+			posDataCode = transactionRequest.posDataCode.toString(),
+			sessionKey = sskey
+		)
+		return ResponseObject(
+			statusCode = 200,
+			message = "terminal transaction",
+			data = response
+		)
+
+	}
+
+
 	@PostMapping("/perform-purchase-transaction")
 	fun performPurchase(
 		@RequestHeader(value = "sskey") sskey: String,

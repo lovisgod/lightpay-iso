@@ -28,6 +28,7 @@ import org.jpos.iso.ISOMsg
 import org.jpos.iso.packager.GenericPackager
 import org.jpos.iso.packager.ISO87APackager
 import java.util.*
+import kotlin.math.exp
 
 
 class IsoMessageBuilderUp {
@@ -324,6 +325,173 @@ class IsoMessageBuilderUp {
         }
     }
 
+
+    fun getPayAttitudeRequest(
+        iccString: String,
+        terminalInfo: TerminalInfo,
+        transaction: RequestIccData,
+        accountType: AccountType,
+        posDataCode: String,
+        sessionKey: String
+    ): PurchaseResponse {
+        val now = Date()
+        val message = ISOMsg()
+        val processCode = "01" + accountType.value + "00"
+        var hasPin = transaction.haspin
+        val stan = getNextStan()
+        val randomReference = "${Date().time}".substring(0, 12)
+        val track2data =transaction.TRACK_2_DATA
+        println("track2 data => ${track2data}")
+        // extract pan and expiry
+        val strTrack2 = track2data
+        println(strTrack2.split("D"))
+        var panX = strTrack2.split("D")[0]
+        val expiry = strTrack2.split("D")[1].substring(0, 4)
+//        val src = strTrack2.split("D")[1].substring(4, 7)
+        var src = "221"
+
+        message.packager = packager
+        message.mti = "0200"
+        message.set(2, panX)
+        message.set(3, processCode)
+        message.set(4, transaction.TRANSACTION_AMOUNT)
+        message.set(7, timeAndDateFormatter.format(now))
+        message.set(11, stan)
+        message.set(12, timeFormatter.format(now))
+        message.set(13, monthFormatter.format(now))
+        message.set(14, expiry)
+        message.set(18, terminalInfo.merchantCategoryCode)
+        message.set(22, if (hasPin == true) "051" else "051")
+        message.set(23, transaction.APP_PAN_SEQUENCE_NUMBER)
+        message.set(25, "00")
+        message.set(26, "06")
+        message.set(28, "C00000000")
+        message.set(32, "111129")
+        message.set(35, transaction.TRACK_2_DATA)
+        message.set(37, randomReference)
+        message.set(40, src)
+        message.set(41, terminalInfo.terminalCode)
+        message.set(42, terminalInfo.merchantId)
+        message.set(43, terminalInfo.merchantName)
+        message.set(49, "566")
+//        message.set(55, iccString)
+
+
+        if (hasPin == true) {
+            message.set(52, transaction.EMV_CARD_PIN_DATA.CardPinBlock)
+            message.set(123, posDataCode)
+            message.set(60, "010083K16395448041MeterNumber=12.87001510.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
+            message.set(62, "00698WD0101333${transaction.userPhoneNumber}")
+        } else {
+            message.set(123, posDataCode)
+            message.set(60, "010083K16395448041MeterNumber=12.87001510.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
+            message.set(62, "00698WD0101333${transaction.userPhoneNumber}")
+        }
+
+
+        // set message hash
+        val bytes = message.pack()
+        val length = bytes.size
+//        val temp = ByteArray(length - 64)
+//        if (length >= 64) {
+//            System.arraycopy(bytes, 0, temp, 0, length - 64)
+//        }
+
+
+        val hashValue = IsoUtils.getMac(sessionKey, bytes) //SHA256
+        message.set(128, hashValue)
+        message.dump(System.out, "request -- ")
+
+        try {
+
+            // set server Ip and port
+            socket.setIpAndPort(UP_IP, UP_PORT)
+            // open connection
+            val isConnected = socket.open()
+            if (!isConnected) return PurchaseResponse(
+                responseCode = Constants.TIMEOUT_CODE,
+                authCode = "",
+                stan = "",
+                scripts = "",
+                date = now.time,
+                description=  IsoUtils.getIsoResultMsg(Constants.TIMEOUT_CODE) ?: "Unknown Error",
+                referenceNumber = randomReference,
+                transactionTime = timeFormatter.format(now),
+                transactionDate = monthFormatter.format(now),
+                transactionDateTime = timeAndDateFormatter.format(now),
+                hasPinValue = hasPin
+            )
+
+
+            val request = message.pack()
+            println("Purchase Request HEX ---> ${IsoUtils.bytesToHex(request)}")
+
+            val response = socket.sendReceive(request)
+            println("response from nibbspurchase : ${response?.let { HexUtil.toHexString(it) }}")
+
+            println("response from nibbspurchase length : ${response?.size}")
+
+            // close connection
+            socket.close()
+
+            message.unpack(response)
+
+            printISOMessage(message)
+            println(message.getValue(39))
+            // close connection
+            socket.close()
+
+//            if (message.getValue(39) != "00") {
+//                return "no key"
+//            }
+
+
+            // return response
+            return message.let {
+                val authCode = it.getValue(38) ?: ""
+                val code = it.getValue(39) ?: ""
+                val scripts = it.getValue(55) ?: ""
+                val transTime = it.getValue(12) ?: ""
+                val transDate = it.getValue(13) ?: ""
+
+                println("code is code is ::: $code while time is $transTime date is ${transDate}")
+
+                val responseMsg = IsoUtils.getIsoResultMsg(code.toString()) ?: "Unknown Error"
+
+                return@let PurchaseResponse(
+                    responseCode = code.toString(),
+                    authCode = authCode.toString(),
+                    stan = stan,
+                    scripts = scripts.toString(),
+                    date = now.time,
+                    description = responseMsg.toString(),
+                    referenceNumber = randomReference,
+                    transactionTime = transTime.toString(),
+                    transactionDate = transDate.toString(),
+                    transactionDateTime = timeAndDateFormatter.format(now),
+                    hasPinValue = hasPin
+                )
+            }
+        } catch (e: Exception) {
+            // log error
+            e.printStackTrace()
+            e.printStackTrace()
+            // return response
+            return PurchaseResponse(
+                responseCode = Constants.TIMEOUT_CODE,
+                authCode = "",
+                stan = stan,
+                scripts = "",
+                date = now.time,
+                description=  IsoUtils.getIsoResultMsg(Constants.TIMEOUT_CODE) ?: "Unknown Error",
+                referenceNumber = randomReference,
+                transactionTime = timeFormatter.format(now),
+                transactionDate = monthFormatter.format(now),
+                transactionDateTime = timeAndDateFormatter.format(now),
+                hasPinValue = hasPin
+            )
+        }
+    }
 
     private fun printISOMessage(isoMsg: ISOMsg) {
         try {
