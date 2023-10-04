@@ -5,19 +5,29 @@ import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
 import com.lovisgod.lightpayiso.utild.ObjectMapper
+import com.lovisgod.lightpayiso.utild.events.Publisher
+import com.lovisgod.lightpayiso.utild.events.SubmitTransEvent
 import com.sun.net.httpserver.Headers
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.ApplicationEventPublisherAware
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
+import java.util.concurrent.Flow
 
 @SpringBootApplication
 @RestController
 class LightpayIsoApplication {
+
+	@Autowired
+	lateinit var  applicationEventPublisher: Publisher
+
 
 	@GetMapping("/health")
 	fun checkHealth(): Any {
@@ -240,11 +250,42 @@ class LightpayIsoApplication {
 			posDataCode = transactionRequest.posDataCode.toString(),
 			sessionKey = sskey
 		)
-		return ResponseObject(
+		val responseObject = ResponseObject(
 			statusCode = 200,
 			message = "terminal transaction",
 			data = response
 		)
+
+		val data = SubmitTransactionRequestBody(
+			description = "PayAttitude Payment",
+			responseCode = "${response.responseCode}",
+			authCode = response.authCode,
+			currencyCode = "566",
+			amount = transactionRequest.amount.toString().trimStart('0'),
+			masked_pan = "",
+			stan = response.stan,
+			transactionRef = response.referenceNumber,
+			referenceNumber = response.referenceNumber,
+			date = response.transactionDate,
+			scripts = "",
+			transTYpe = "payment",
+			merchant_code = terminalInfo.merchantId,
+			paymentType = "payattitude",
+			terminal_id = terminalInfo.terminalCode,
+			transRoute = "up",
+			agent_transtype = "push"
+
+		)
+
+		val event = TransEvent(
+			name ="SUBTRANS",
+			api_key = api_key,
+			merchant_id = merchant_id,
+			data = data)
+
+		applicationEventPublisher.publishSubmitEvent(event)
+
+		return responseObject
 
 	}
 
@@ -318,6 +359,8 @@ class LightpayIsoApplication {
 			return false
 		}
 	}
+
+
 }
 
 

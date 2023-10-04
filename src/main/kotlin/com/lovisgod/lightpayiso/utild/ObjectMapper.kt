@@ -11,4 +11,9 @@ object ObjectMapper {
 
         return converted
     }
+
+    inline fun <reified T> convertObjectBackToJson(data: T): String {
+        val gson = Gson()
+        return gson.toJson(data)
+    }
 }
