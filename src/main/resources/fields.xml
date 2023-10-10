@@ -55,7 +55,7 @@
     <isofield id="49" length="3" name="CURRENCY CODE, TRANSACTION" class="org.jpos.iso.IFA_NUMERIC"/>
     <isofield id="50" length="3" name="CURRENCY CODE, SETTLEMENT" class="org.jpos.iso.IF_CHAR"/>
     <isofield id="51" length="3" name="CURRENCY CODE, CARDHOLDER BILLING" class="org.jpos.iso.IF_CHAR"/>
-    <isofield id="52" length="8" name="PIN DATA" class="org.jpos.iso.IFA_BINARY"/>
+    <isofield id="52" length="8" name="PIN DATA" class="org.jpos.iso.IFB_BINARY"/>
     <isofield id="53" length="16" name="SECURITY RELATED CONTROL INFORMATION" class="org.jpos.iso.IFA_BINARY"/>
     <isofield id="54" length="120" name="ADDITIONAL AMOUNTS" class="org.jpos.iso.IFA_LLLCHAR"/>
     <isofield id="55" length="999" name="RESERVED ISO" class="org.jpos.iso.IFA_LLLCHAR"/>
