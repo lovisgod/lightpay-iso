@@ -343,7 +343,7 @@ class LightpayIsoApplication {
 	fun validateKeys(api_key: String, merchant_id: String): Boolean {
 		try {
 			val request: HttpRequest = HttpRequest.newBuilder()
-				.uri(URI("${Constants.LOCAL_TMS_URL}/merchant/validate-key"))
+				.uri(URI("${Constants.PROD_TMS_URL}/merchant/validate-key"))
 				.headers("api_key", api_key, "merchant_id", merchant_id)
 				.GET()
 				.build()
