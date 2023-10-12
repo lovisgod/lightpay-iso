@@ -44,7 +44,7 @@ class LightpayIsoApplication {
 		var masterKey = isoHelper.generateKeyDownloadMessage(
 			processCode = Constants.TMK,
 			terminalId = terminalId,
-				key = Constants.testCMS
+				key = Constants.productionCMS
 		)
 
 		if (masterKey != "no key") {

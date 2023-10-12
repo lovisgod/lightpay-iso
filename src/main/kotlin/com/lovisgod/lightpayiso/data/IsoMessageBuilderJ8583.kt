@@ -92,10 +92,15 @@ class IsoMessageBuilderJ8583 {
 
 
             // extract encrypted key with clear key
-            val encryptedKey = msg.message.getField<String>(SRCI)
-            val decryptedKey = TripleDES.soften(key, encryptedKey.value)
+            if (msg.message.getField<String>(39).value != "00") {
+                return "no key"
+            } else {
+                val encryptedKey = msg.message.getField<String>(SRCI)
+                val decryptedKey = TripleDES.soften(key, encryptedKey.value)
 
-            return decryptedKey
+                return decryptedKey
+            }
+
 
         } catch (e: ISOException) {
             throw Exception(e)
