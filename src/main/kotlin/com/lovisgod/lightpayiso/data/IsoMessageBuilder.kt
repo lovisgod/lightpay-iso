@@ -197,7 +197,7 @@ class IsoMessageBuilder {
         message.set(22, "051")
         message.set(23, transaction.APP_PAN_SEQUENCE_NUMBER)
         message.set(25, "00")
-        message.set(26, "04")
+        message.set(26, "06")
         message.set(28, "C00000000")
         message.set(32, IsoUtils.getBINFromPAN(panX))
         message.set(35, transaction.TRACK_2_DATA)
@@ -220,7 +220,7 @@ class IsoMessageBuilder {
         // set message hash
         val bytes = message.pack()
 //        bytes[19]++
-        val length = bytes.size
+//        val length = bytes.size
 //        val temp = ByteArray(length - 64)
 //        if (length >= 64) {
 //            System.arraycopy(bytes, 0, temp, 0, length - 64)

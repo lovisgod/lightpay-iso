@@ -1,6 +1,7 @@
 package com.lovisgod.lightpayiso
 
 import com.lovisgod.lightpayiso.data.IsoMessageBuilder
+import com.lovisgod.lightpayiso.data.IsoMessageBuilderJ8583
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
@@ -36,7 +37,7 @@ class LightpayIsoApplication {
 
 	@GetMapping("/get-nibss-keys")
 	fun downloadAllNibssKey(@RequestParam(value = "terminalId") terminalId: String): Any {
-		val isoHelper = IsoMessageBuilder()
+		val isoHelper = IsoMessageBuilderJ8583()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
 		var param: Any = TerminalInfo()
@@ -83,7 +84,7 @@ class LightpayIsoApplication {
 	fun downloadParameter(
 		@RequestParam(value = "terminalId") terminalId: String,
 		@RequestParam(value = "sessionKey") sessionKey: String): Any {
-		val isoHelper = IsoMessageBuilder()
+		val isoHelper = IsoMessageBuilderJ8583()
 
 		var parameter = isoHelper.downloadTerminalParam(
 			processCode = Constants.NIBSS_PARAMETER,
@@ -307,7 +308,7 @@ class LightpayIsoApplication {
 //		if (transactionRequest.amount?.toInt()!! > 200000) {
 //			return performCashout(sskey, api_key, merchant_id, transactionRequest)
 //		} else {
-			val isoHelper = IsoMessageBuilder()
+			val isoHelper = IsoMessageBuilderJ8583()
 
 			var terminalInfo = TerminalInfo().copy(
 				merchantCategoryCode = transactionRequest.merchantCategoryCode.toString(),
@@ -342,7 +343,7 @@ class LightpayIsoApplication {
 	fun validateKeys(api_key: String, merchant_id: String): Boolean {
 		try {
 			val request: HttpRequest = HttpRequest.newBuilder()
-				.uri(URI("${Constants.PROD_TMS_URL}/merchant/validate-key"))
+				.uri(URI("${Constants.LOCAL_TMS_URL}/merchant/validate-key"))
 				.headers("api_key", api_key, "merchant_id", merchant_id)
 				.GET()
 				.build()
