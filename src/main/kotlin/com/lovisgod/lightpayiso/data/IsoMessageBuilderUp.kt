@@ -350,7 +350,9 @@ class IsoMessageBuilderUp {
         transaction: RequestIccData,
         accountType: AccountType,
         posDataCode: String,
-        sessionKey: String
+        sessionKey: String,
+        field7: String,
+        field12: String
     ): PurchaseResponse {
         val now = Date()
         val message = ISOMsg()
@@ -373,9 +375,9 @@ class IsoMessageBuilderUp {
         message.set(2, panX)
         message.set(3, processCode)
         message.set(4, transaction.TRANSACTION_AMOUNT)
-        message.set(7, timeAndDateFormatter.format(now))
+        message.set(7, field7)
         message.set(11, stan)
-        message.set(12, timeFormatter.format(now))
+        message.set(12, field12)
         message.set(13, monthFormatter.format(now))
         message.set(14, expiry)
         message.set(18, terminalInfo.merchantCategoryCode)

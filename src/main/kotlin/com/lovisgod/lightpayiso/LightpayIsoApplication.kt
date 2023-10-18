@@ -249,7 +249,9 @@ class LightpayIsoApplication {
 			transaction = transactionInfo,
 			accountType = AccountType.Default,
 			posDataCode = transactionRequest.posDataCode.toString(),
-			sessionKey = sskey
+			sessionKey = sskey,
+			field7 = transactionRequest.field7.toString(),
+			field12 = transactionRequest.field12.toString()
 		)
 		val responseObject = ResponseObject(
 			statusCode = 200,

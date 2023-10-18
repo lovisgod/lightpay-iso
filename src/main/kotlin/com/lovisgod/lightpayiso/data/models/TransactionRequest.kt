@@ -1,5 +1,9 @@
 package com.lovisgod.lightpayiso.data.models
 
+import com.lovisgod.lightpayiso.utild.DateUtils
+import java.util.*
+
+var date = Date()
 data class TransactionRequest(
     var merchantCategoryCode : String?  = null,
     var terminalCode         : String?  = null,
@@ -13,5 +17,7 @@ data class TransactionRequest(
     var posDataCode          : String?  = null,
     var iccString            : String? = null,
     var agentPhoneNumber     : String? = "0000000000",
-    var userPhoneNumber      : String? = "08069493993"
+    var userPhoneNumber      : String? = "08069493993",
+    var field7               : String? = DateUtils.timeAndDateFormatter.format(date),
+    var field12              : String? = DateUtils.timeAndDateFormatter.format(date)
 )
