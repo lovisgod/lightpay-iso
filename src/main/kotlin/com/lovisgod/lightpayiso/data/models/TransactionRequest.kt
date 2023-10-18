@@ -19,5 +19,5 @@ data class TransactionRequest(
     var agentPhoneNumber     : String? = "0000000000",
     var userPhoneNumber      : String? = "08069493993",
     var field7               : String? = DateUtils.timeAndDateFormatter.format(date),
-    var field12              : String? = DateUtils.timeAndDateFormatter.format(date)
+    var field12              : String? = DateUtils.timeFormatter.format(date)
 )
