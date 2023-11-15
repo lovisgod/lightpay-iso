@@ -1,26 +1,20 @@
 package com.lovisgod.lightpayiso
 
-import com.lovisgod.lightpayiso.data.IsoMessageBuilder
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderJ8583
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
 import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
-import com.lovisgod.lightpayiso.utild.events.SubmitTransEvent
-import com.sun.net.httpserver.Headers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.ApplicationEventPublisher
-import org.springframework.context.ApplicationEventPublisherAware
+import org.springframework.core.env.Environment
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
-import java.util.concurrent.Flow
 
 @SpringBootApplication
 @RestController
@@ -28,6 +22,9 @@ class LightpayIsoApplication {
 
 	@Autowired
 	lateinit var  applicationEventPublisher: Publisher
+
+	@Autowired
+	lateinit var environment: Environment
 
 
 	@GetMapping("/health")
@@ -103,6 +100,7 @@ class LightpayIsoApplication {
 
 	@GetMapping("/get-up-key")
 	fun downloadAllupKey(@RequestParam(value = "terminalId") terminalId: String): Any {
+		println(environment.getProperty("up.ctmk"))
 		val isoHelper = IsoMessageBuilderUp()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
@@ -110,7 +108,7 @@ class LightpayIsoApplication {
 		var masterKey = isoHelper.generateKeyDownloadMessage(
 			processCode = Constants.TMK,
 			terminalId = terminalId,
-			key = Constants.UPCTMK
+			key = environment.getProperty("up.ctmk").toString()
 		)
 
 		if (masterKey != "no key") {

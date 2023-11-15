@@ -400,11 +400,11 @@ class IsoMessageBuilderUp {
         if (hasPin == true) {
             message.set(52, transaction.EMV_CARD_PIN_DATA.CardPinBlock)
             message.set(123, posDataCode)
-            message.set(60, "010083K16395448041MeterNumber=12.87001510.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
+            message.set(60, "010083K16395448041MeterNumber=12.87001585.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
             message.set(62, "00698WD0101333${transaction.userPhoneNumber}")
         } else {
             message.set(123, posDataCode)
-            message.set(60, "010083K16395448041MeterNumber=12.87001510.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
+            message.set(60, "010083K16395448041MeterNumber=12.87001585.Acct=${transaction.agentPhoneNumber}.${transaction.userPhoneNumber}")
             message.set(62, "00698WD0101333${transaction.userPhoneNumber}")
         }
 
