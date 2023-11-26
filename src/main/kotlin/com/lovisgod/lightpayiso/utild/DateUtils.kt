@@ -22,7 +22,9 @@ internal object DateUtils {
 
     val shortDateFormat by lazy {  SimpleDateFormat( "dd MMMM, yyyy", Locale.ROOT) }
 
-    val universalDateFormat by lazy {  SimpleDateFormat("yyyy-MM-DD'T'HH:mm:ss.sssZ", Locale.ROOT) }
+//    val universalDateFormat by lazy {  SimpleDateFormat("yyyy-MM-DD'T'HH:mm:ss.sssZ", Locale.ROOT) }
+
+    val universalDateFormat by lazy {  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT) }
 
     val hourMinuteFormat by lazy { SimpleDateFormat("HH:mm", Locale.ROOT) }
 
