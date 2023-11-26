@@ -17,6 +17,7 @@ import com.lovisgod.lightpayiso.data.models.TerminalInfo
 import com.lovisgod.lightpayiso.tcp.IsoSocket
 import com.lovisgod.lightpayiso.tcp.IsoSocketImpl
 import com.lovisgod.lightpayiso.utild.*
+import com.lovisgod.lightpayiso.utild.DateUtils.universalDateFormat
 import com.lovisgod.lightpayiso.utild.TerminalInfoParser
 import com.solab.iso8583.parse.ConfigParser
 import org.jpos.iso.ISOException
@@ -261,7 +262,7 @@ class IsoMessageBuilderJ8583 {
                     referenceNumber = randomReference,
                     transactionTime = timeFormatter.format(now),
                     transactionDate = monthFormatter.format(now),
-                    transactionDateTime = timeAndDateFormatter.format(now),
+                    transactionDateTime = universalDateFormat.format(now),
                     hasPinValue = hasPin
             )
 
@@ -303,7 +304,7 @@ class IsoMessageBuilderJ8583 {
                     referenceNumber = randomReference,
                     transactionTime = transTime.toString(),
                     transactionDate = transDate.toString(),
-                    transactionDateTime = timeAndDateFormatter.format(now),
+                    transactionDateTime = universalDateFormat.format(now),
                     hasPinValue = hasPin
                 )
             }
@@ -322,7 +323,7 @@ class IsoMessageBuilderJ8583 {
                 referenceNumber = randomReference,
                 transactionTime = timeFormatter.format(now),
                 transactionDate = monthFormatter.format(now),
-                transactionDateTime = timeAndDateFormatter.format(now),
+                transactionDateTime = universalDateFormat.format(now),
                 hasPinValue = hasPin
             )
         }
