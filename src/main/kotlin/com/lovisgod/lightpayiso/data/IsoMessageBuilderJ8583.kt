@@ -49,7 +49,7 @@ class IsoMessageBuilderJ8583 {
     }
 
 
-    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, 20000)
+    val socket: IsoSocket = IsoSocketImpl(ISW_TERMINAL_IP_CTMS_PROD, ISW_TERMINAL_PORT_CTMS_PROD, 30000)
 
 
     fun generateKeyDownloadMessage(
