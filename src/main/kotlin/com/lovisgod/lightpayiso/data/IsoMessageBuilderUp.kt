@@ -233,11 +233,11 @@ class IsoMessageBuilderUp {
         if (hasPin == true) {
             message.setValue(52, transaction.EMV_CARD_PIN_DATA.CardPinBlock)
             message.setValue(123, posDataCode)
-            message.setValue(62, "010085C54697648036MeterNumber=12.87001510.Acct=0000000000")
+            message.setValue(62, "010085C54697648036MeterNumber=12.87001585.Acct=0000000000")
             message.message.removeFields( 59)
         } else {
             message.setValue(123, posDataCode)
-            message.setValue(62, "010085C54697648036MeterNumber=12.87001510.Acct=0000000000")
+            message.setValue(62, "010085C54697648036MeterNumber=12.87001585.Acct=0000000000")
             message.message.removeFields( 52, 59)
         }
 

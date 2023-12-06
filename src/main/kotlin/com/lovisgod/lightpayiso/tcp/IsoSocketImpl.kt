@@ -16,9 +16,6 @@ import javax.net.ssl.TrustManager
 /*
 * To change this template, choose Tools | Templates
 * and open the template in the editor.
-*/ /**
- *
- * @author tosin.eniolorunda
  */
 class IsoSocketImpl : IsoSocket {
     private var socket: SSLSocket? = null

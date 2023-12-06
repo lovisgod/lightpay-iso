@@ -14,7 +14,7 @@ object Constants {
 //    val UP_PORT = 5334
 
     val UP_IP = "196.46.20.85"
-    val UP_PORT = 3062
+    val UP_PORT = 5453
 
 
     val ISW_TERMINAL_IP_CTMS_PROD = "196.6.103.18"

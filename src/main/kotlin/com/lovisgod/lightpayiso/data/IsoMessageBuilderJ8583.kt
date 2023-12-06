@@ -19,6 +19,10 @@ import com.lovisgod.lightpayiso.tcp.IsoSocketImpl
 import com.lovisgod.lightpayiso.utild.*
 import com.lovisgod.lightpayiso.utild.DateUtils.universalDateFormat
 import com.lovisgod.lightpayiso.utild.TerminalInfoParser
+import com.solab.iso8583.IsoMessage
+import com.solab.iso8583.IsoType
+import com.solab.iso8583.IsoValue
+import com.solab.iso8583.codecs.CompositeField
 import com.solab.iso8583.parse.ConfigParser
 import org.jpos.iso.ISOException
 import org.jpos.iso.ISOMsg
@@ -135,6 +139,16 @@ class IsoMessageBuilderJ8583 {
             if (length >= 64) {
                 System.arraycopy(bytes, 0, temp, 0, length - 64)
             }
+
+            // SAMPLE OF GETTING SUBFIELD
+//            val subfied: CompositeField = message.message.getObjectValue(7)
+//            subfied.getObjectValue<String>(1)
+            //SAMPLE ADD SUBFIELD
+//            val compositeField  = CompositeField().addValue(IsoValue(IsoType.NUMERIC, 20, 2))
+//                .addValue(IsoValue(IsoType.ALPHA, "34FT", 4))
+//
+//            message.setSubField(125, compositeField)
+
 
 
             // confirm that key was downloaded

@@ -1,6 +1,7 @@
 package com.lovisgod.lightpayiso.utild
 
 import com.solab.iso8583.IsoMessage
+import com.solab.iso8583.codecs.CompositeField
 import java.io.PrintStream
 
 class NibssIsoMessage(val message: IsoMessage)  {
@@ -11,6 +12,12 @@ class NibssIsoMessage(val message: IsoMessage)  {
         message.setValue(fieldId, value, field.type, field.length)
         return this
     }
+
+//    fun setSubField(fieldId: Int, value: CompositeField): NibssIsoMessage {
+//        val field = message.getField<Any>(fieldId)
+//        message.setValue(fieldId, value, field.type, field.length)
+//        return this
+//    }
 
     fun dump(p: PrintStream, indent: String = "") {
 
