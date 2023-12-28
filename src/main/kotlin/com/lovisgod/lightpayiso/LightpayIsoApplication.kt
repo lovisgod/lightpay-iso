@@ -100,7 +100,7 @@ class LightpayIsoApplication {
 
 	@GetMapping("/get-up-key")
 	fun downloadAllupKey(@RequestParam(value = "terminalId") terminalId: String): Any {
-		println(environment.getProperty("up.ctmk"))
+//		println(environment.getProperty("up.ctmk"))
 		val isoHelper = IsoMessageBuilderUp()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
@@ -117,7 +117,7 @@ class LightpayIsoApplication {
 				terminalId = terminalId,
 				key = masterKey.toString()
 			)
-			println("sessionKey is => ::: ${sessionKey}")
+//			println("sessionKey is => ::: ${sessionKey}")
 		}
 
 		if (sessionKey != "no key") {
@@ -126,7 +126,7 @@ class LightpayIsoApplication {
 				terminalId = terminalId,
 				key = masterKey.toString()
 			)
-			println("pinkey is => ::: ${pinkKey}")
+//			println("pinkey is => ::: ${pinkKey}")
 		}
 
 		if (sessionKey != "no key") {

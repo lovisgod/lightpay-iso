@@ -57,7 +57,7 @@ class IsoMessageBuilderUp {
     var data = javaClass.getResourceAsStream("/fields.xml")
     var packager = GenericPackager(data)
 
-    val socket: IsoSocket = IsoNoSslSocketImpl(UP_IP, UP_PORT, 30000)
+    val socket: IsoSocket = IsoNoSslSocketImpl(UP_IP, UP_PORT, 40000)
 
 
     fun generateKeyDownloadMessage(
