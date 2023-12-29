@@ -4,6 +4,7 @@ import com.lovisgod.lightpayiso.data.IsoMessageBuilderJ8583
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
+import com.lovisgod.lightpayiso.services.ApiService
 import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
+import java.util.concurrent.CompletableFuture
 
 @SpringBootApplication
 @RestController
@@ -26,10 +28,21 @@ class LightpayIsoApplication {
 	@Autowired
 	lateinit var environment: Environment
 
+	@Autowired
+	lateinit var apiService: ApiService
+
 
 	@GetMapping("/health")
 	fun checkHealth(): Any {
 		return ResponseObject(statusCode = 200, message = "Service is healthy", data = null)
+	}
+
+	@GetMapping("/test-bombardment")
+	fun testBomb(): CompletableFuture<Any> {
+
+		return apiService.handleTestRequestAsync().thenApply {
+			it
+		}
 	}
 
 	@GetMapping("/get-nibss-keys")
@@ -100,7 +113,7 @@ class LightpayIsoApplication {
 
 	@GetMapping("/get-up-key")
 	fun downloadAllupKey(@RequestParam(value = "terminalId") terminalId: String): Any {
-		println(environment.getProperty("up.ctmk"))
+//		println(environment.getProperty("up.ctmk"))
 		val isoHelper = IsoMessageBuilderUp()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
@@ -117,7 +130,7 @@ class LightpayIsoApplication {
 				terminalId = terminalId,
 				key = masterKey.toString()
 			)
-			println("sessionKey is => ::: ${sessionKey}")
+//			println("sessionKey is => ::: ${sessionKey}")
 		}
 
 		if (sessionKey != "no key") {
@@ -126,7 +139,7 @@ class LightpayIsoApplication {
 				terminalId = terminalId,
 				key = masterKey.toString()
 			)
-			println("pinkey is => ::: ${pinkKey}")
+//			println("pinkey is => ::: ${pinkKey}")
 		}
 
 		if (sessionKey != "no key") {
