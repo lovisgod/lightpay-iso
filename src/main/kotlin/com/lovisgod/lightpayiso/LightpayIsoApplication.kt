@@ -5,12 +5,14 @@ import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
 import com.lovisgod.lightpayiso.services.ApiService
+import com.lovisgod.lightpayiso.utild.IsoUtils
 import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.core.env.Environment
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.net.http.HttpClient
@@ -34,7 +36,14 @@ class LightpayIsoApplication {
 
 	@GetMapping("/health")
 	fun checkHealth(): Any {
-		return ResponseObject(statusCode = 200, message = "Service is healthy", data = null)
+		val event = SampleEvent(
+			name ="SAMPLE_EVENT",
+			api_key = "sample",
+			merchant_id = "merchant id")
+		println("got here for check health")
+
+		applicationEventPublisher.testSampleEvent(event) // this is called on another thread
+		return ResponseObject(statusCode = 200, message = "Service is healthy!!!", data = null) // this returned using the former thread
 	}
 
 	@GetMapping("/test-bombardment")
@@ -46,7 +55,10 @@ class LightpayIsoApplication {
 	}
 
 	@GetMapping("/get-nibss-keys")
-	fun downloadAllNibssKey(@RequestParam(value = "terminalId") terminalId: String): Any {
+	fun downloadAllNibssKey(
+		@RequestParam(value = "terminalId") terminalId: String
+	): Any {
+
 		val isoHelper = IsoMessageBuilderJ8583()
 		var pinkKey: Any = ""
 		var sessionKey: Any = ""
@@ -181,6 +193,7 @@ class LightpayIsoApplication {
 
 	@PostMapping("/perform-cashout-transaction")
 	fun performCashout(
+		@RequestParam(value = "version", required = false) version: String?,
 		@RequestHeader(value = "sskey") sskey: String,
 		@RequestHeader(value = "api_key") api_key: String,
 		@RequestHeader(value = "merchant_id") merchant_id: String,
@@ -215,6 +228,40 @@ class LightpayIsoApplication {
 			posDataCode = transactionRequest.posDataCode.toString(),
 			sessionKey = sskey
 		)
+
+		if (!version.isNullOrEmpty() && version == "1") {
+			val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
+
+			val data = SubmitTransactionRequestBody(
+				description =  response.description,
+				responseCode = response.responseCode,
+				authCode = response.authCode,
+				currencyCode = "566",
+				amount = transactionRequest.amount.toString().trimStart('0'),
+				masked_pan = IsoUtils.maskPan(pan),
+				stan = response.stan,
+				transactionRef = response.referenceNumber,
+				referenceNumber = response.referenceNumber,
+				date = response.transactionDate,
+				scripts = "",
+				transTYpe = "cashout",
+				merchant_code = terminalInfo.merchantId,
+				paymentType = "Card",
+				terminal_id = terminalInfo.terminalCode,
+				transRoute = "up",
+				agent_transtype = transactionRequest.agentTransType
+
+			)
+
+			val event = TransEvent(
+				name ="SUBTRANS",
+				api_key = api_key,
+				merchant_id = merchant_id,
+				data = data)
+
+			applicationEventPublisher.publishSubmitEvent(event)
+		}
+
 		return ResponseObject(
 			statusCode = 200,
 			message = "terminal transaction",
@@ -226,6 +273,7 @@ class LightpayIsoApplication {
 
 	@PostMapping("/perform-payattitude-transaction")
 	fun performPayAttitude(
+		@RequestParam(value = "version", required = false) version: String?,
 		@RequestHeader(value = "sskey") sskey: String,
 		@RequestHeader(value = "api_key") api_key: String,
 		@RequestHeader(value = "merchant_id") merchant_id: String,
@@ -270,34 +318,36 @@ class LightpayIsoApplication {
 			data = response
 		)
 
-		val data = SubmitTransactionRequestBody(
-			description = "PayAttitude Payment",
-			responseCode = "${response.responseCode}",
-			authCode = response.authCode,
-			currencyCode = "566",
-			amount = transactionRequest.amount.toString().trimStart('0'),
-			masked_pan = "",
-			stan = response.stan,
-			transactionRef = response.referenceNumber,
-			referenceNumber = response.referenceNumber,
-			date = response.transactionDate,
-			scripts = "",
-			transTYpe = "payment",
-			merchant_code = terminalInfo.merchantId,
-			paymentType = "payattitude",
-			terminal_id = terminalInfo.terminalCode,
-			transRoute = "up",
-			agent_transtype = "push"
+		if (!version.isNullOrEmpty() && version == "1") {
+			val data = SubmitTransactionRequestBody(
+				description = "PayAttitude Payment",
+				responseCode = "${response.responseCode}",
+				authCode = response.authCode,
+				currencyCode = "566",
+				amount = transactionRequest.amount.toString().trimStart('0'),
+				masked_pan = "",
+				stan = response.stan,
+				transactionRef = response.referenceNumber,
+				referenceNumber = response.referenceNumber,
+				date = response.transactionDate,
+				scripts = "",
+				transTYpe = "payment",
+				merchant_code = terminalInfo.merchantId,
+				paymentType = "payattitude",
+				terminal_id = terminalInfo.terminalCode,
+				transRoute = "up",
+				agent_transtype = "push"
 
-		)
+			)
 
-		val event = TransEvent(
-			name ="SUBTRANS",
-			api_key = api_key,
-			merchant_id = merchant_id,
-			data = data)
+			val event = TransEvent(
+				name ="SUBTRANS",
+				api_key = api_key,
+				merchant_id = merchant_id,
+				data = data)
 
-		applicationEventPublisher.publishSubmitEvent(event)
+			applicationEventPublisher.publishSubmitEvent(event)
+		}
 
 		return responseObject
 
@@ -306,6 +356,7 @@ class LightpayIsoApplication {
 
 	@PostMapping("/perform-purchase-transaction")
 	fun performPurchase(
+		@RequestParam(value = "version", required = false) version: String?,
 		@RequestHeader(value = "sskey") sskey: String,
 		@RequestHeader(value = "api_key") api_key: String,
 		@RequestHeader(value = "merchant_id") merchant_id: String,
@@ -345,7 +396,42 @@ class LightpayIsoApplication {
 				posDataCode = transactionRequest.posDataCode.toString(),
 				sessionKey = sskey
 			)
-			return ResponseObject(
+
+		if (!version.isNullOrEmpty() && version == "1") {
+			val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
+
+			val data = SubmitTransactionRequestBody(
+				description =  response.description,
+				responseCode = response.responseCode,
+				authCode = response.authCode,
+				currencyCode = "566",
+				amount = transactionRequest.amount.toString().trimStart('0'),
+				masked_pan = IsoUtils.maskPan(pan),
+				stan = response.stan,
+				transactionRef = response.referenceNumber,
+				referenceNumber = response.referenceNumber,
+				date = response.transactionDate,
+				scripts = "",
+				transTYpe = "purchase",
+				merchant_code = terminalInfo.merchantId,
+				paymentType = "Card",
+				terminal_id = terminalInfo.terminalCode,
+				transRoute = "nibss",
+				agent_transtype = transactionRequest.agentTransType
+
+			)
+
+			val event = TransEvent(
+				name ="SUBTRANS",
+				api_key = api_key,
+				merchant_id = merchant_id,
+				data = data)
+
+			applicationEventPublisher.publishSubmitEvent(event)
+		}
+
+
+		return ResponseObject(
 				statusCode = 200,
 				message = "terminal transaction",
 				data = response
