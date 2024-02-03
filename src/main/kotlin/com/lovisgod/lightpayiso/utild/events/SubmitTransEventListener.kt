@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 internal class SubmitTransEventListener : ApplicationListener<SubmitTransEvent> {
     override fun onApplicationEvent(event: SubmitTransEvent) {
       if (event.getEvent().name == "SUBTRANS") {
+         println("transaction event data :::: ${event.getEvent().data.responseCode}")
         SubmitTransHelper().submitTransactionToLightPayTMS(
             data = event.getEvent().data,
             api_key = event.getEvent().api_key,

@@ -8,6 +8,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.charset.Charset
 
 class SubmitTransHelper {
 
@@ -19,7 +20,7 @@ class SubmitTransHelper {
                 .headers("api_key", api_key, "merchant_id", merchant_id)
                 .POST(
                     HttpRequest.BodyPublishers.ofString(
-                    ObjectMapper.convertObjectBackToJson(data)
+                    ObjectMapper.convertObjectBackToJson(data), Charset.forName("UTF-8")
                 ))
                 .build()
 
