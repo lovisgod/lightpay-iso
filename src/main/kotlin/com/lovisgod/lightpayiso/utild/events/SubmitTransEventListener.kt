@@ -17,3 +17,14 @@ internal class SubmitTransEventListener : ApplicationListener<SubmitTransEvent> 
       }
     }
 }
+
+
+@Component
+internal class SampleEventListener : ApplicationListener<SubmitSampleEvent> {
+    override fun onApplicationEvent(event: SubmitSampleEvent) {
+        Thread.sleep(3000)
+        if (event.getEvent().name == "SAMPLE_EVENT") {
+           println("Sample event logged here")
+        }
+    }
+}

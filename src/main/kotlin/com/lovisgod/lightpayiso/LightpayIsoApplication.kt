@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.core.env.Environment
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.net.http.HttpClient
@@ -33,7 +34,14 @@ class LightpayIsoApplication {
 
 
 	@GetMapping("/health")
+	@Async
 	fun checkHealth(): Any {
+		val event = SampleEvent(
+			name ="SAMPLE_EVENT",
+			api_key = "sample",
+			merchant_id = "merchant id")
+
+		applicationEventPublisher.testSampleEvent(event)
 		return ResponseObject(statusCode = 200, message = "Service is healthy", data = null)
 	}
 
