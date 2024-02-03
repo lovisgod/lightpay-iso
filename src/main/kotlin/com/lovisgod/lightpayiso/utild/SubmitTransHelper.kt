@@ -2,6 +2,7 @@ package com.lovisgod.lightpayiso.utild
 
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.KeyValidationResponse
+import com.lovisgod.lightpayiso.data.models.SubmitTransactionBody
 import com.lovisgod.lightpayiso.data.models.SubmitTransactionRequestBody
 import java.net.URI
 import java.net.http.HttpClient
@@ -10,7 +11,7 @@ import java.net.http.HttpResponse
 
 class SubmitTransHelper {
 
-    fun submitTransactionToLightPayTMS(data: SubmitTransactionRequestBody, api_key: String,
+    fun submitTransactionToLightPayTMS(data: SubmitTransactionBody, api_key: String,
                                        merchant_id: String): Boolean {
         try {
             val request: HttpRequest = HttpRequest.newBuilder()
