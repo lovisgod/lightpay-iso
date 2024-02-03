@@ -5,6 +5,7 @@ import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
 import com.lovisgod.lightpayiso.data.models.*
 import com.lovisgod.lightpayiso.services.ApiService
+import com.lovisgod.lightpayiso.utild.IsoUtils
 import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,15 +35,15 @@ class LightpayIsoApplication {
 
 
 	@GetMapping("/health")
-	@Async
 	fun checkHealth(): Any {
 		val event = SampleEvent(
 			name ="SAMPLE_EVENT",
 			api_key = "sample",
 			merchant_id = "merchant id")
+		println("got here for check health")
 
-		applicationEventPublisher.testSampleEvent(event)
-		return ResponseObject(statusCode = 200, message = "Service is healthy", data = null)
+		applicationEventPublisher.testSampleEvent(event) // this is called on another thread
+		return ResponseObject(statusCode = 200, message = "Service is healthy!!!", data = null) // this returned using the former thread
 	}
 
 	@GetMapping("/test-bombardment")
@@ -223,6 +224,37 @@ class LightpayIsoApplication {
 			posDataCode = transactionRequest.posDataCode.toString(),
 			sessionKey = sskey
 		)
+
+		val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
+
+		val data = SubmitTransactionRequestBody(
+			description =  response.description,
+			responseCode = response.responseCode,
+			authCode = response.authCode,
+			currencyCode = "566",
+			amount = transactionRequest.amount.toString().trimStart('0'),
+			masked_pan = IsoUtils.maskPan(pan),
+			stan = response.stan,
+			transactionRef = response.referenceNumber,
+			referenceNumber = response.referenceNumber,
+			date = response.transactionDate,
+			scripts = "",
+			transTYpe = "cashout",
+			merchant_code = terminalInfo.merchantId,
+			paymentType = "Card",
+			terminal_id = terminalInfo.terminalCode,
+			transRoute = "up",
+			agent_transtype = transactionRequest.agentTransType
+
+		)
+
+		val event = TransEvent(
+			name ="SUBTRANS",
+			api_key = api_key,
+			merchant_id = merchant_id,
+			data = data)
+
+		applicationEventPublisher.publishSubmitEvent(event)
 		return ResponseObject(
 			statusCode = 200,
 			message = "terminal transaction",
@@ -353,7 +385,39 @@ class LightpayIsoApplication {
 				posDataCode = transactionRequest.posDataCode.toString(),
 				sessionKey = sskey
 			)
-			return ResponseObject(
+
+		 val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
+
+		  val data = SubmitTransactionRequestBody(
+			description =  response.description,
+			responseCode = response.responseCode,
+			authCode = response.authCode,
+			currencyCode = "566",
+			amount = transactionRequest.amount.toString().trimStart('0'),
+			masked_pan = IsoUtils.maskPan(pan),
+			stan = response.stan,
+			transactionRef = response.referenceNumber,
+			referenceNumber = response.referenceNumber,
+			date = response.transactionDate,
+			scripts = "",
+			transTYpe = "purchase",
+			merchant_code = terminalInfo.merchantId,
+			paymentType = "Card",
+			terminal_id = terminalInfo.terminalCode,
+			transRoute = "nibss",
+			agent_transtype = transactionRequest.agentTransType
+
+		)
+
+		 val event = TransEvent(
+			name ="SUBTRANS",
+			api_key = api_key,
+			merchant_id = merchant_id,
+			data = data)
+
+		applicationEventPublisher.publishSubmitEvent(event)
+
+		return ResponseObject(
 				statusCode = 200,
 				message = "terminal transaction",
 				data = response

@@ -211,4 +211,8 @@ object IsoUtils {
 
         return bin
     }
+
+    fun maskPan(pan: String): String {
+        return "${pan.take(4)}*******${pan.takeLast(4)}"
+    }
 }
