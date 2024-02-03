@@ -1,5 +1,6 @@
 package com.lovisgod.lightpayiso.data.models
 
+import com.google.gson.annotations.SerializedName
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Namespace
 import org.simpleframework.xml.NamespaceList
@@ -69,5 +70,27 @@ data class SubmitTransactionRequestBody(
     var amount: String = ""
 
    )
+
+
+data class SubmitTransactionBody (
+
+    @SerializedName("description"     ) var description    : String? = null,
+    @SerializedName("responseCode"    ) var responseCode   : String? = null,
+    @SerializedName("authCode"        ) var authCode       : String? = null,
+    @SerializedName("currencyCode"    ) var currencyCode   : String? = null,
+    @SerializedName("amount"          ) var amount         : String? = null,
+    @SerializedName("masked_pan"      ) var maskedPan      : String? = null,
+    @SerializedName("stan"            ) var stan           : String? = null,
+    @SerializedName("transactionRef"  ) var transactionRef : String? = null,
+    @SerializedName("date"            ) var date           : String? = null,
+    @SerializedName("scripts"         ) var scripts        : String? = null,
+    @SerializedName("transTYpe"       ) var transTYpe      : String? = null,
+    @SerializedName("merchant_code"   ) var merchantCode   : String? = null,
+    @SerializedName("paymentType"     ) var paymentType    : String? = null,
+    @SerializedName("terminal_id"     ) var terminalId     : String? = null,
+    @SerializedName("transRoute"      ) var transRoute     : String? = null,
+    @SerializedName("agent_transtype" ) var agentTranstype : String? = null
+
+)
 
 

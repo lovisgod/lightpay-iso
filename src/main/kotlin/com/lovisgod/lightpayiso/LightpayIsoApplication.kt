@@ -42,7 +42,7 @@ class LightpayIsoApplication {
 			merchant_id = "merchant id")
 		println("got here for check health")
 
-		applicationEventPublisher.testSampleEvent(event) // this is called on another thread
+//		applicationEventPublisher.testSampleEvent(event) // this is called on another thread
 		return ResponseObject(statusCode = 200, message = "Service is healthy!!!", data = null) // this returned using the former thread
 	}
 
@@ -232,24 +232,23 @@ class LightpayIsoApplication {
 		if (!version.isNullOrEmpty() && version == "1") {
 			val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
 
-			val data = SubmitTransactionRequestBody(
+			val data = SubmitTransactionBody(
 				description =  response.description,
 				responseCode = response.responseCode,
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				masked_pan = IsoUtils.maskPan(pan),
+				maskedPan = IsoUtils.maskPan(pan),
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
-				referenceNumber = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "cashout",
-				merchant_code = terminalInfo.merchantId,
+				merchantCode = terminalInfo.merchantId,
 				paymentType = "Card",
-				terminal_id = terminalInfo.terminalCode,
+				terminalId = terminalInfo.terminalCode,
 				transRoute = "up",
-				agent_transtype = transactionRequest.agentTransType
+				agentTranstype = transactionRequest.agentTransType
 
 			)
 
@@ -319,24 +318,23 @@ class LightpayIsoApplication {
 		)
 
 		if (!version.isNullOrEmpty() && version == "1") {
-			val data = SubmitTransactionRequestBody(
+			val data = SubmitTransactionBody(
 				description = "PayAttitude Payment",
 				responseCode = "${response.responseCode}",
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				masked_pan = "",
+				maskedPan = "",
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
-				referenceNumber = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "payment",
-				merchant_code = terminalInfo.merchantId,
+				merchantCode = terminalInfo.merchantId,
 				paymentType = "payattitude",
-				terminal_id = terminalInfo.terminalCode,
+				terminalId = terminalInfo.terminalCode,
 				transRoute = "up",
-				agent_transtype = "push"
+				agentTranstype = "push"
 
 			)
 
@@ -400,24 +398,23 @@ class LightpayIsoApplication {
 		if (!version.isNullOrEmpty() && version == "1") {
 			val pan =  transactionInfo.TRACK_2_DATA.split("F")[0].split("D")[0]
 
-			val data = SubmitTransactionRequestBody(
+			val data = SubmitTransactionBody(
 				description =  response.description,
 				responseCode = response.responseCode,
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				masked_pan = IsoUtils.maskPan(pan),
+				maskedPan = IsoUtils.maskPan(pan),
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
-				referenceNumber = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "purchase",
-				merchant_code = terminalInfo.merchantId,
+				merchantCode = terminalInfo.merchantId,
 				paymentType = "Card",
-				terminal_id = terminalInfo.terminalCode,
+				terminalId = terminalInfo.terminalCode,
 				transRoute = "nibss",
-				agent_transtype = transactionRequest.agentTransType
+				agentTranstype = transactionRequest.agentTransType
 
 			)
 
