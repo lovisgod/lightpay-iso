@@ -79,17 +79,17 @@ data class SubmitTransactionBody (
     @SerializedName("authCode"        ) var authCode       : String? = null,
     @SerializedName("currencyCode"    ) var currencyCode   : String? = null,
     @SerializedName("amount"          ) var amount         : String? = null,
-    @SerializedName("masked_pan"      ) var maskedPan      : String? = null,
+    @SerializedName("masked_pan"      ) var masked_pan      : String? = null,
     @SerializedName("stan"            ) var stan           : String? = null,
     @SerializedName("transactionRef"  ) var transactionRef : String? = null,
     @SerializedName("date"            ) var date           : String? = null,
     @SerializedName("scripts"         ) var scripts        : String? = null,
     @SerializedName("transTYpe"       ) var transTYpe      : String? = null,
-    @SerializedName("merchant_code"   ) var merchantCode   : String? = null,
+    @SerializedName("merchant_code"   ) var merchant_code   : String? = null,
     @SerializedName("paymentType"     ) var paymentType    : String? = null,
-    @SerializedName("terminal_id"     ) var terminalId     : String? = null,
+    @SerializedName("terminal_id"     ) var terminal_id     : String? = null,
     @SerializedName("transRoute"      ) var transRoute     : String? = null,
-    @SerializedName("agent_transtype" ) var agentTranstype : String? = null
+    @SerializedName("agent_transtype" ) var agent_transtype : String? = null
 
 )
 
