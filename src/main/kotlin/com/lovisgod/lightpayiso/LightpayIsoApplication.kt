@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.core.env.Environment
-import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.net.http.HttpClient
@@ -238,17 +237,17 @@ class LightpayIsoApplication {
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				maskedPan = IsoUtils.maskPan(pan),
+				masked_pan = IsoUtils.maskPan(pan),
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "cashout",
-				merchantCode = terminalInfo.merchantId,
+				merchant_code = terminalInfo.merchantId,
 				paymentType = "Card",
-				terminalId = terminalInfo.terminalCode,
+				terminal_id = terminalInfo.terminalCode,
 				transRoute = "up",
-				agentTranstype = transactionRequest.agentTransType
+				agent_transtype = transactionRequest.agentTransType
 
 			)
 
@@ -324,17 +323,17 @@ class LightpayIsoApplication {
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				maskedPan = "",
+				masked_pan = "",
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "payment",
-				merchantCode = terminalInfo.merchantId,
+				merchant_code = terminalInfo.merchantId,
 				paymentType = "payattitude",
-				terminalId = terminalInfo.terminalCode,
+				terminal_id = terminalInfo.terminalCode,
 				transRoute = "up",
-				agentTranstype = "push"
+				agent_transtype = "push"
 
 			)
 
@@ -404,17 +403,17 @@ class LightpayIsoApplication {
 				authCode = response.authCode,
 				currencyCode = "566",
 				amount = transactionRequest.amount.toString().trimStart('0'),
-				maskedPan = IsoUtils.maskPan(pan),
+				masked_pan = IsoUtils.maskPan(pan),
 				stan = response.stan,
 				transactionRef = response.referenceNumber,
 				date = response.transactionDate,
 				scripts = "",
 				transTYpe = "purchase",
-				merchantCode = terminalInfo.merchantId,
+				merchant_code = terminalInfo.merchantId,
 				paymentType = "Card",
-				terminalId = terminalInfo.terminalCode,
+				terminal_id = terminalInfo.terminalCode,
 				transRoute = "nibss",
-				agentTranstype = transactionRequest.agentTransType
+				agent_transtype = transactionRequest.agentTransType
 
 			)
 
