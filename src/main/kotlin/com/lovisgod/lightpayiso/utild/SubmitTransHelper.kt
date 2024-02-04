@@ -15,12 +15,14 @@ class SubmitTransHelper {
     fun submitTransactionToLightPayTMS(data: SubmitTransactionBody, api_key: String,
                                        merchant_id: String): Boolean {
         try {
+            val body = com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(data)
+            println("body string object::::: ${body}")
             val request: HttpRequest = HttpRequest.newBuilder()
                 .uri(URI("${Constants.PROD_TMS_URL}/merchant/submit-payment"))
                 .headers("api_key", api_key, "merchant_id", merchant_id)
                 .POST(
                     HttpRequest.BodyPublishers.ofString(
-                    ObjectMapper.convertObjectBackToJson(data), Charset.forName("UTF-8")
+                        body
                 ))
                 .build()
 
