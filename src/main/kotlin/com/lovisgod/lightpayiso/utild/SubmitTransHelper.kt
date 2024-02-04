@@ -16,14 +16,18 @@ class SubmitTransHelper {
                                        merchant_id: String): Boolean {
         try {
             val body = com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(data)
+            val publisher =  HttpRequest.BodyPublishers.ofString(
+                body
+            )
+            println("content length :::: $publisher")
             println("body string object::::: ${body}")
             val request: HttpRequest = HttpRequest.newBuilder()
                 .uri(URI("${Constants.PROD_TMS_URL}/merchant/submit-payment"))
+                .header("Content-Type", "application/json")
                 .headers("api_key", api_key, "merchant_id", merchant_id)
                 .POST(
-                    HttpRequest.BodyPublishers.ofString(
-                        body
-                ))
+                   publisher
+                )
                 .build()
 
             val client   = HttpClient.newHttpClient()
