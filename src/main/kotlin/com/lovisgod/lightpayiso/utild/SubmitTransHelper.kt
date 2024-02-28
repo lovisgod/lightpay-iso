@@ -19,8 +19,6 @@ class SubmitTransHelper {
             val publisher =  HttpRequest.BodyPublishers.ofString(
                 body
             )
-            println("content length :::: $publisher")
-            println("body string object::::: ${body}")
             val request: HttpRequest = HttpRequest.newBuilder()
                 .uri(URI("${Constants.PROD_TMS_URL}/merchant/submit-payment"))
                 .header("Content-Type", "application/json")
