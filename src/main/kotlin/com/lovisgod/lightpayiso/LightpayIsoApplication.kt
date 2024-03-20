@@ -3,8 +3,11 @@ package com.lovisgod.lightpayiso
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderJ8583
 import com.lovisgod.lightpayiso.data.IsoMessageBuilderUp
 import com.lovisgod.lightpayiso.data.constants.Constants
+import com.lovisgod.lightpayiso.data.constants.Processor
 import com.lovisgod.lightpayiso.data.models.*
 import com.lovisgod.lightpayiso.services.ApiService
+import com.lovisgod.lightpayiso.services.KeyHandler.KeyGenerator
+import com.lovisgod.lightpayiso.services.KeyHandler.LocalKeyHandler
 import com.lovisgod.lightpayiso.utild.IsoUtils
 import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
@@ -32,9 +35,15 @@ class LightpayIsoApplication {
 	@Autowired
 	lateinit var apiService: ApiService
 
+	@Autowired
+	lateinit var localKeyHandler: LocalKeyHandler
+
 
 	@GetMapping("/health")
 	fun checkHealth(): Any {
+		val keys  = localKeyHandler.getKeys("2ISW0001", Processor.NIBSS)
+		println("keys are :::: mk::::${keys.TMK}, ::: pk::: ${keys.TPK}")
+		localKeyHandler.testKeys(keys.TPK, keys.TMK)
 		val event = SampleEvent(
 			name ="SAMPLE_EVENT",
 			api_key = "sample",
