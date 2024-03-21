@@ -2,6 +2,10 @@ package com.lovisgod.lightpayiso.data.models
 
 
 import com.lovisgod.lightpayiso.data.constants.Constants
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
 import org.simpleframework.xml.*
 
 @Root(name = "allTerminalInfo", strict = false)
@@ -23,8 +27,12 @@ data class AllTerminalInfo (
         var tmsRouteTypeConfig: TmsRouteTypeConfig? = null
 )
 
+@Entity(name = "Terminalinfo")
 @Root(name = "terminalInfoBySerials", strict = false)
 data class TerminalInfo(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long? = 0,
 
         @field:Element(name = "terminalCode", required = false)
         var terminalCode: String = "Terminal",

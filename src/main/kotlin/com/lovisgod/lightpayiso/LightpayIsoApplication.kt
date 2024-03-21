@@ -13,6 +13,7 @@ import com.lovisgod.lightpayiso.utild.ObjectMapper
 import com.lovisgod.lightpayiso.utild.events.Publisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.core.env.Environment
 import org.springframework.web.bind.annotation.*
@@ -22,6 +23,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.util.concurrent.CompletableFuture
 
+@EntityScan("com.lovisgod.lightpayiso.data.models")
 @SpringBootApplication
 @RestController
 class LightpayIsoApplication {
@@ -41,9 +43,9 @@ class LightpayIsoApplication {
 
 	@GetMapping("/health")
 	fun checkHealth(): Any {
-		val keys  = localKeyHandler.getKeys("2ISW0001", Processor.NIBSS)
-		println("keys are :::: mk::::${keys.TMK}, ::: pk::: ${keys.TPK}")
-		localKeyHandler.testKeys(keys.TPK, keys.TMK)
+//		val keys  = localKeyHandler.getKeys("2ISW0001", Processor.NIBSS)
+//		println(keys)
+//		localKeyHandler.initializeUpKeys(terminalId = environment.getProperty("up.terminalid").toString(), processor = Processor.UP)
 		val event = SampleEvent(
 			name ="SAMPLE_EVENT",
 			api_key = "sample",
@@ -67,44 +69,15 @@ class LightpayIsoApplication {
 		@RequestParam(value = "terminalId") terminalId: String
 	): Any {
 
-		val isoHelper = IsoMessageBuilderJ8583()
-		var pinkKey: Any = ""
-		var sessionKey: Any = ""
-		var param: Any = TerminalInfo()
-		var masterKey = isoHelper.generateKeyDownloadMessage(
-			processCode = Constants.TMK,
-			terminalId = terminalId,
-				key = Constants.productionCMS
-		)
-
-		if (masterKey != "no key") {
-			sessionKey = isoHelper.generateKeyDownloadMessage(
-				processCode = Constants.TSK,
-				terminalId = terminalId,
-				key = masterKey.toString()
-			)
-			println("sessionKey is => ::: ${sessionKey}")
-		}
-
-		if (sessionKey != "no key") {
-			pinkKey = isoHelper.generateKeyDownloadMessage(
-				processCode = Constants.TPK,
-				terminalId = terminalId,
-				key = masterKey.toString()
-			)
-			println("pinkey is => ::: ${pinkKey}")
-		}
-		if (sessionKey != "no key") {
-			param = downloadParameter(terminalId = terminalId, sessionKey = sessionKey.toString())
-		}
+		val keyresponse  = localKeyHandler.getKeys(terminalId, Processor.NIBSS)
 		return ResponseObject(
 			statusCode = 200,
 			message = "terminal key details",
 			data = KeyResponse(
-				sessionKey = sessionKey.toString(),
-				masterKey = masterKey.toString(),
-				pinKey = pinkKey.toString(),
-				params = param
+				sessionKey = keyresponse.sessionKey,
+				masterKey = keyresponse.masterKey,
+				pinKey = keyresponse.pinKey,
+				params = keyresponse.params
 			)
 		)
 
@@ -134,45 +107,15 @@ class LightpayIsoApplication {
 	@GetMapping("/get-up-key")
 	fun downloadAllupKey(@RequestParam(value = "terminalId") terminalId: String): Any {
 //		println(environment.getProperty("up.ctmk"))
-		val isoHelper = IsoMessageBuilderUp()
-		var pinkKey: Any = ""
-		var sessionKey: Any = ""
-		var param: Any = TerminalInfo()
-		var masterKey = isoHelper.generateKeyDownloadMessage(
-			processCode = Constants.TMK,
-			terminalId = terminalId,
-			key = environment.getProperty("up.ctmk").toString()
-		)
-
-		if (masterKey != "no key") {
-			sessionKey = isoHelper.generateKeyDownloadMessage(
-				processCode = Constants.TSK,
-				terminalId = terminalId,
-				key = masterKey.toString()
-			)
-//			println("sessionKey is => ::: ${sessionKey}")
-		}
-
-		if (sessionKey != "no key") {
-			pinkKey = isoHelper.generateKeyDownloadMessage(
-				processCode = Constants.TPK,
-				terminalId = terminalId,
-				key = masterKey.toString()
-			)
-//			println("pinkey is => ::: ${pinkKey}")
-		}
-
-		if (sessionKey != "no key") {
-			 param = downloadParameterUp(terminalId = terminalId, sessionKey = sessionKey.toString())
-		}
+		val keyresponse  = localKeyHandler.getKeys(terminalId, Processor.UP)
 		return ResponseObject(
 			statusCode = 200,
 			message = "terminal key details",
 			data = KeyResponse(
-				sessionKey = sessionKey.toString(),
-				masterKey = masterKey.toString(),
-				pinKey = pinkKey.toString(),
-				params = param
+				sessionKey = keyresponse.sessionKey,
+				masterKey = keyresponse.masterKey,
+				pinKey = keyresponse.pinKey,
+				params = keyresponse.params
 			)
 		)
 
